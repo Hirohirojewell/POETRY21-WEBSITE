@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Messages For Jewell</title>
+    <style>
+        /* Importing romantic font */
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a8b, #ff6a88, #d68cc7);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+            padding: 20px;
+            animation: smoothBackground 5s infinite alternate;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #ff99aa, #ff6f8f, #ff4d7e);
+            color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 260px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            animation: slideIn 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #ff4d7e, #ff6f8f);
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            font-family: 'Dancing Script', cursive;
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+            transition: text-shadow 0.3s ease-in-out;
+        }
+
+        .card-title:hover {
+            text-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+        }
+
+        .message {
+            margin-top: 15px;
+            display: none;
+            font-size: 14px;
+            color: #f4f4f9;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .card.active .message {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #ff4d7e;
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #ff4d7e;
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .card:hover::before {
+            content: "❤️";
+            font-size: 24px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            animation: heartPulse 0.8s infinite;
+        }
+
+        @keyframes heartPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: block;
+            object-fit: cover;
+            height: 150px;
+            cursor: pointer;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .modal img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            color: #ff4d7e;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="cards-container" id="cardsContainer">
+        <!-- Cards will be dynamically generated -->
+    </div>
+
+    <!-- Modal -->
+    <div id="imageModal" class="modal">
+        <button class="modal-close" onclick="closeModal()">✖</button>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Zoomed Image">
+        </div>
+    </div>
+
+    <script>
+        const messages = [
+            "In the quiet of the night, my heart does speak,A love so strong, it's all that I seek. Her smile, a glow that lights up my day, In her presence, all worries drift away.",
+            "Her laughter, like music, fills the air, A melody so sweet, beyond compare. Her eyes, like stars, they captivate, In their gaze, I find my fate.",
+            "Each moment with her feels like a dream, A world so perfect, or so it seems. With every step, she holds my heart, A masterpiece, a work of art.",
+            "I love her more than words can say, In every moment, in every way. Her love is my reason, my song, my prayer, For her, my heart, I will always care."
+    ];
+
+        const images = [
+            "message1.gif", // Corrected path format
+            "message2.gif", // Corrected path format
+            "message3.gif", // Corrected path format
+            "message4.gif"  // Corrected path format
+        ];
+
+        const container = document.getElementById('cardsContainer');
+
+        // Function to create cards dynamically
+        function createCards() {
+            messages.forEach((msg, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-title">Message ${index + 1}</div>
+                    <div class="message">${msg}</div>
+                    <img src="${images[index]}" alt="Romantic Image" onclick="openModal(this)">
+                    <button class="close-btn" onclick="closeCard(event, ${index})">&#10084;</button>
+                `;
+                card.onclick = () => toggleMessage(card);
+                container.appendChild(card);
+            });
+        }
+
+        let activeCard = null;
+
+        function toggleMessage(card) {
+            if (activeCard === card) {
+                card.classList.remove('active');
+                activeCard = null;
+            } else {
+                if (activeCard) activeCard.classList.remove('active');
+                card.classList.add('active');
+                activeCard = card;
+            }
+        }
+
+        function closeCard(event, index) {
+            event.stopPropagation(); // Prevent card click event
+            const card = event.target.closest('.card');
+            card.style.display = 'none';
+        }
+
+        function openModal(image) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modal.style.display = 'flex';
+            modalImage.src = image.src;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        createCards();
+    </script>
+</body>
+</html>
